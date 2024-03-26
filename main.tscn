@@ -1,0 +1,111 @@
+[gd_scene load_steps=8 format=3 uid="uid://chledrc08mf0n"]
+
+[ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="1_peh5k"]
+
+[sub_resource type="GDScript" id="GDScript_f2i7w"]
+resource_name = "player_spawner"
+script/source = "extends Node2D
+
+var player_scene = preload(\"res://scenes/player/player.tscn\")
+var player: Node
+
+func _ready():
+	spawn_player()
+
+func _input(event):
+	if event.is_action_pressed(\"reset_player\"):
+		player.queue_free()
+		spawn_player()
+		
+func spawn_player():
+	player = player_scene.instantiate()
+	player.position = Vector2.ZERO
+	add_child(player)
+"
+
+[sub_resource type="GDScript" id="GDScript_1q2na"]
+resource_name = "floor"
+script/source = "extends Node2D
+
+@export_range(0, 2000, 0.5, \"or_greater\") var gap_width: float = 400:
+	get: return gap_width
+	set(value):
+		gap_width = value
+		update_platforms()
+
+@export_range(32, 320, 0.5, \"or_greater\") var platform_height: float = 48:
+	get: return platform_height
+	set(value): 
+		platform_height = value
+		update_platforms()
+
+func _ready():
+	get_tree().get_root().size_changed.connect(update_platforms)
+	update_platforms()
+	
+# update platforms with new information (including viewport changes)
+func update_platforms():
+	var viewport_size: Vector2 = get_viewport_rect().size
+	
+	if ($left == null || $right == null): return
+	position.x = viewport_size.x / 2
+	
+	# place sprites
+	$left/sprite.scale = Vector2(viewport_size.x/2 - gap_width/2, platform_height)
+	$right/sprite.scale = Vector2(viewport_size.x/2 - gap_width/2, platform_height)
+	
+	$left.position = Vector2(
+		-viewport_size.x/2 + $left/sprite.scale.x/2,
+		viewport_size.y - platform_height/2)
+	$right.position = Vector2(
+		viewport_size.x/2 - $right/sprite.scale.x/2,
+		viewport_size.y - platform_height/2)
+		
+	# place collision boxes
+	$left/collider.shape.size = $left/sprite.scale
+	$right/collider.shape.size = $right/sprite.scale
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3ptks"]
+shader = ExtResource("1_peh5k")
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_1yc25"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u3jlu"]
+size = Vector2(376, 32)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_55wyp"]
+shader = ExtResource("1_peh5k")
+
+[node name="main" type="Node2D"]
+
+[node name="player_spawner" type="Node2D" parent="."]
+position = Vector2(48, 584)
+script = SubResource("GDScript_f2i7w")
+
+[node name="floor" type="Node2D" parent="."]
+position = Vector2(576, 2.08165e-12)
+script = SubResource("GDScript_1q2na")
+
+[node name="left" type="StaticBody2D" parent="floor"]
+position = Vector2(-388, 632)
+
+[node name="sprite" type="Sprite2D" parent="floor/left"]
+material = SubResource("ShaderMaterial_3ptks")
+scale = Vector2(376, 32)
+texture = SubResource("CanvasTexture_1yc25")
+
+[node name="collider" type="CollisionShape2D" parent="floor/left"]
+shape = SubResource("RectangleShape2D_u3jlu")
+
+[node name="right" type="StaticBody2D" parent="floor"]
+position = Vector2(388, 632)
+
+[node name="sprite" type="Sprite2D" parent="floor/right"]
+material = SubResource("ShaderMaterial_55wyp")
+position = Vector2(2.08165e-12, 2.08165e-12)
+scale = Vector2(376, 32)
+texture = SubResource("CanvasTexture_1yc25")
+
+[node name="collider" type="CollisionShape2D" parent="floor/right"]
+shape = SubResource("RectangleShape2D_u3jlu")
