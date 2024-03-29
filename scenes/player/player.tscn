@@ -8,40 +8,39 @@
 resource_name = "player"
 script/source = "extends CharacterBody2D
 
-
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-
-# Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting(\"physics/2d/default_gravity\")
 
+# input variables
+var inputs: Dictionary
+var input_dir: Vector2 = Vector2.ZERO # max magnitude 1.0
+var jump_pressed: bool = false # true if currently being pressed
+
+# movement constants
+var start_accel: float = 800
+var max_speed: float = 1200
+var stop_accel: float = 400
+
+func _ready():
+	InputManager.connect_player(self)
 
 func _physics_process(delta):
-	# Add the gravity.
-	if not is_on_floor():
-		velocity.y += gravity * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction = Input.get_axis(\"ui_left\", \"ui_right\")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
-	if velocity.x > 0: $sprite.flip_h = true
-	elif velocity.x < 0: $sprite.flip_h = false
-
-	if abs(velocity.x) > 0: $sprite.play(\"run\")
-	else: $sprite.play(\"idle\")
+	# apply gravity
+	velocity.y += gravity
 	
-	if !is_on_floor(): $sprite.play(\"jump\")
+	# horizontal movement
+	if input_dir: 
+		# change directions at start rate
+		# makes counterstrafing possible
+		velocity.x = lerpf(velocity.x, input_dir.x * max_speed, start_accel / max_speed)
+	else:
+		# only use stop rate for stopping
+		velocity.x = lerpf(velocity.x, 0, stop_accel / max_speed)
 
 	move_and_slide()
+
+func apply_inputs(input_dir: Vector2, jump_pressed: bool):
+	self.input_dir = input_dir
+	self.jump_pressed = jump_pressed
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bf01k"]
