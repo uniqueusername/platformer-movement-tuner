@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://chledrc08mf0n"]
+[gd_scene load_steps=8 format=3 uid="uid://chledrc08mf0n"]
 
+[ext_resource type="Script" path="res://utility/path_tracer.gd" id="1_o5pmy"]
 [ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="1_peh5k"]
 
 [sub_resource type="GDScript" id="GDScript_1q2na"]
@@ -67,6 +68,9 @@ size = Vector2(376, 32)
 shader = ExtResource("1_peh5k")
 
 [node name="main" type="Node2D"]
+
+[node name="path_tracer" type="Node" parent="."]
+script = ExtResource("1_o5pmy")
 
 [node name="floor" type="Node2D" parent="."]
 position = Vector2(576, 2.08165e-12)

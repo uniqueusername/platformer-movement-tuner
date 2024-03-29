@@ -1,55 +1,20 @@
-[gd_scene load_steps=15 format=3 uid="uid://djw71ie8wroqe"]
+[gd_scene load_steps=16 format=3 uid="uid://djw71ie8wroqe"]
 
 [ext_resource type="Texture2D" uid="uid://dawxfm4v5g37x" path="res://assets/sprites/player/player_idle.png" id="1_nsfjd"]
 [ext_resource type="Texture2D" uid="uid://485tmp7b8c2a" path="res://assets/sprites/player/player_jump.png" id="2_6wssl"]
 [ext_resource type="Texture2D" uid="uid://beapxp4qm050a" path="res://assets/sprites/player/player_run.png" id="2_oqhbi"]
+[ext_resource type="Script" path="res://scenes/player/movement.gd" id="4_732hx"]
 
 [sub_resource type="GDScript" id="GDScript_3c4u0"]
 resource_name = "player"
 script/source = "extends CharacterBody2D
 
-var gravity = ProjectSettings.get_setting(\"physics/2d/default_gravity\")
-
-# input variables
-var input_dir: Vector2 = Vector2.ZERO # max magnitude 1.0
-var jump_just_pressed: bool = false # true if currently being pressed
-
-# movement constants
-## ground movement
-var start_accel: float = 800
-var max_speed: float = 1200
-var stop_accel: float = 400
-
-## air movement
-var jump_speed: float = 600
-
 func _ready():
 	# send a reference of myself to the input singleton
 	InputManager.connect_player(self)
 
-func _physics_process(delta):
-	# apply gravity
-	velocity.y += gravity * delta
-	
-	# horizontal movement
-	if input_dir: 
-		# change directions at start rate
-		# makes counterstrafing possible
-		velocity.x = lerpf(velocity.x, input_dir.x * max_speed, start_accel / max_speed)
-	else:
-		# only use stop rate for stopping
-		velocity.x = lerpf(velocity.x, 0, stop_accel / max_speed)
-		
-	# jumping
-	if jump_just_pressed and is_on_floor():
-		velocity.y = -jump_speed
-
-	move_and_slide()
-
-# input objects can call this to send inputs to this player
 func apply_inputs(input_dir: Vector2, jump_just_pressed: bool):
-	self.input_dir = input_dir
-	self.jump_just_pressed = jump_just_pressed
+	$movement.apply_inputs(input_dir, jump_just_pressed)
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bf01k"]
@@ -149,3 +114,6 @@ animation = &"land"
 [node name="collider" type="CollisionShape2D" parent="."]
 position = Vector2(1, 3)
 shape = SubResource("RectangleShape2D_40m11")
+
+[node name="movement" type="Node" parent="."]
+script = ExtResource("4_732hx")
