@@ -11,21 +11,25 @@ script/source = "extends CharacterBody2D
 var gravity = ProjectSettings.get_setting(\"physics/2d/default_gravity\")
 
 # input variables
-var inputs: Dictionary
 var input_dir: Vector2 = Vector2.ZERO # max magnitude 1.0
-var jump_pressed: bool = false # true if currently being pressed
+var jump_just_pressed: bool = false # true if currently being pressed
 
 # movement constants
+## ground movement
 var start_accel: float = 800
 var max_speed: float = 1200
 var stop_accel: float = 400
 
+## air movement
+var jump_speed: float = 600
+
 func _ready():
+	# send a reference of myself to the input singleton
 	InputManager.connect_player(self)
 
 func _physics_process(delta):
 	# apply gravity
-	velocity.y += gravity
+	velocity.y += gravity * delta
 	
 	# horizontal movement
 	if input_dir: 
@@ -35,12 +39,17 @@ func _physics_process(delta):
 	else:
 		# only use stop rate for stopping
 		velocity.x = lerpf(velocity.x, 0, stop_accel / max_speed)
+		
+	# jumping
+	if jump_just_pressed and is_on_floor():
+		velocity.y = -jump_speed
 
 	move_and_slide()
 
-func apply_inputs(input_dir: Vector2, jump_pressed: bool):
+# input objects can call this to send inputs to this player
+func apply_inputs(input_dir: Vector2, jump_just_pressed: bool):
 	self.input_dir = input_dir
-	self.jump_pressed = jump_pressed
+	self.jump_just_pressed = jump_just_pressed
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bf01k"]

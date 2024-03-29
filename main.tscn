@@ -1,31 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://chledrc08mf0n"]
+[gd_scene load_steps=7 format=3 uid="uid://chledrc08mf0n"]
 
 [ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="1_peh5k"]
-
-[sub_resource type="GDScript" id="GDScript_f2i7w"]
-resource_name = "player_spawner"
-script/source = "extends Node2D
-
-var player_scene = preload(\"res://scenes/player/player.tscn\")
-var player: Node
-
-func _ready():
-	spawn_player()
-
-func _input(event):
-	if event.is_action_pressed(\"reset_player\"):
-		player.queue_free()
-		spawn_player()
-		
-func spawn_player():
-	player = player_scene.instantiate()
-	player.position = Vector2.ZERO
-	add_child(player)
-"
 
 [sub_resource type="GDScript" id="GDScript_1q2na"]
 resource_name = "floor"
 script/source = "extends Node2D
+
+var player_spawner_scene = preload(\"res://scenes/player/player_spawner.tscn\")
+var player_spawner: Node2D
 
 @export_range(0, 2000, 0.5, \"or_greater\") var gap_width: float = 400:
 	get: return gap_width
@@ -41,8 +23,12 @@ script/source = "extends Node2D
 
 func _ready():
 	get_tree().get_root().size_changed.connect(update_platforms)
-	update_platforms()
 	
+	player_spawner = player_spawner_scene.instantiate()
+	add_child(player_spawner)
+	
+	update_platforms()
+
 # update platforms with new information (including viewport changes)
 func update_platforms():
 	var viewport_size: Vector2 = get_viewport_rect().size
@@ -64,6 +50,9 @@ func update_platforms():
 	# place collision boxes
 	$left/collider.shape.size = $left/sprite.scale
 	$right/collider.shape.size = $right/sprite.scale
+	
+	# place player spawner
+	player_spawner.global_position = Vector2(48, viewport_size.y - platform_height/2 - 96)
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ptks"]
@@ -78,10 +67,6 @@ size = Vector2(376, 32)
 shader = ExtResource("1_peh5k")
 
 [node name="main" type="Node2D"]
-
-[node name="player_spawner" type="Node2D" parent="."]
-position = Vector2(48, 584)
-script = SubResource("GDScript_f2i7w")
 
 [node name="floor" type="Node2D" parent="."]
 position = Vector2(576, 2.08165e-12)

@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://is0l27p3s4o"]
+
+[sub_resource type="GDScript" id="GDScript_f2i7w"]
+resource_name = "player_spawner"
+script/source = "extends Node2D
+
+var player_scene = preload(\"res://scenes/player/player.tscn\")
+var player: Node
+
+func _ready():
+	spawn_player()
+
+func _input(event):
+	if event.is_action_pressed(\"reset_player\"):
+		player.queue_free()
+		spawn_player()
+		
+func spawn_player():
+	player = player_scene.instantiate()
+	player.position = Vector2.ZERO
+	add_child(player)
+"
+
+[node name="player_spawner" type="Node2D"]
+position = Vector2(48, 584)
+script = SubResource("GDScript_f2i7w")
