@@ -1,3 +1,4 @@
+# movement component script for CharacterBody2D
 extends Node
 
 # reference to parent node (player)
@@ -18,25 +19,28 @@ var stop_accel: float = 400
 var jump_speed: float = 600
 
 func _physics_process(delta):
-	# apply gravity
-	p.velocity.y += gravity * delta
-	
-	# horizontal movement
-	if input_dir: 
-		# change directions at start rate
-		# makes counterstrafing possible
-		p.velocity.x = lerpf(p.velocity.x, input_dir.x * max_speed, start_accel / max_speed)
-	else:
-		# only use stop rate for stopping
-		p.velocity.x = lerpf(p.velocity.x, 0, stop_accel / max_speed)
-		
-	# jumping
-	if jump_just_pressed and p.is_on_floor():
-		p.velocity.y = -jump_speed
-
+	update_velocities(input_dir, jump_just_pressed, delta)
 	p.move_and_slide()
 
 # input objects can call this to send inputs to this player
 func apply_inputs(input_dir: Vector2, jump_just_pressed: bool):
 	self.input_dir = input_dir
 	self.jump_just_pressed = jump_just_pressed
+
+# update character velocities for one frame based on inputs
+func update_velocities(dir: Vector2, jump: bool, delta: float):
+	# apply gravity
+	p.velocity.y += gravity * delta
+	
+	# horizontal movement
+	if dir: 
+		# change directions at start rate
+		# makes counterstrafing possible
+		p.velocity.x = lerpf(p.velocity.x, dir.x * max_speed, start_accel / max_speed)
+	else:
+		# only use stop rate for stopping
+		p.velocity.x = lerpf(p.velocity.x, 0, stop_accel / max_speed)
+		
+	# jumping
+	if jump and p.is_on_floor():
+		p.velocity.y = -jump_speed
