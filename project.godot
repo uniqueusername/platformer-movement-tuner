@@ -19,6 +19,10 @@ config/icon="res://assets/sprites/icon.svg"
 
 InputManager="*res://utility/input_manager.gd"
 
+[debug]
+
+gdscript/warnings/shadowed_variable=0
+
 [display]
 
 window/size/mode=2

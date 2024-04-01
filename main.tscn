@@ -69,7 +69,7 @@ shader = ExtResource("1_peh5k")
 
 [node name="main" type="Node2D"]
 
-[node name="path_tracer" type="Node" parent="."]
+[node name="jump_tracer" type="Line2D" parent="."]
 script = ExtResource("1_o5pmy")
 
 [node name="floor" type="Node2D" parent="."]
