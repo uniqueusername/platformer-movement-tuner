@@ -15,8 +15,8 @@ var jump_just_pressed: bool = false
 @export_group("movement configuration")
 @export_subgroup("ground movement")
 @export var start_accel: float = 800
-@export var max_speed: float = 1200
 @export var stop_accel: float = 400
+@export var max_speed: float = 1200
 
 @export_subgroup("air movement")
 @export var first_half_grav: float = 980
@@ -26,13 +26,12 @@ var jump_speed: float = 600 # calculated from height
 	get: return jump_height
 	set(value):
 		jump_height = value
-		calculate_jump(value)
+		jump_speed = calculate_jump(value)
 @export var air_strafe_multiplier: float = 0.2
 
 func _ready():
 	animated = sprite != null
 	calculate_jump(jump_height)
-	print(jump_height)
 
 func _physics_process(delta):
 	update_velocities(input_dir, jump_just_pressed, delta)
@@ -71,9 +70,28 @@ func update_velocities(dir: Vector2, jump: bool, delta: float):
 	if jump and p.is_on_floor():
 		p.velocity.y = -jump_speed
 
+func cancel_movement():
+	p.velocity = Vector2.ZERO
+
+# update movement config with external values
+func update_config(start_accel: float, 
+				   stop_accel:float, 
+				   max_speed: float,
+				   first_half_grav: float,
+				   second_half_grav: float,
+				   jump_height: float,
+				   air_strafe_multiplier: float):
+	self.start_accel = start_accel
+	self.stop_accel = stop_accel
+	self.max_speed = max_speed
+	self.first_half_grav = first_half_grav
+	self.second_half_grav = second_half_grav
+	self.jump_height = jump_height
+	self.air_strafe_multiplier = air_strafe_multiplier
+
 # calculate jump velocity based on desired jump height
 func calculate_jump(jump_height: float):
-	jump_speed = sqrt(2 * first_half_grav * jump_height)
+	return sqrt(2 * first_half_grav * jump_height)
 
 # animate sprite based on status
 # expects "run", "idle", and "jump" animations

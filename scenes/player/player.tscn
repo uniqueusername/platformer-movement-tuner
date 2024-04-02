@@ -15,6 +15,9 @@ func _ready():
 
 func apply_inputs(input_dir: Vector2, jump_just_pressed: bool):
 	$movement.apply_inputs(input_dir, jump_just_pressed)
+
+func cancel_movement():
+	$movement.cancel_movement()
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bf01k"]
@@ -118,6 +121,7 @@ shape = SubResource("RectangleShape2D_40m11")
 [node name="movement" type="Node2D" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("4_732hx")
 sprite = NodePath("../sprite")
-jump_height = 16.0
 
 [node name="ground_ray" type="RayCast2D" parent="movement"]
+
+[node name="movement_tuner" type="Node2D" parent="."]

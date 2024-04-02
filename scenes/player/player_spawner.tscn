@@ -8,17 +8,14 @@ var player_scene = preload(\"res://scenes/player/player.tscn\")
 var player: Node
 
 func _ready():
-	spawn_player()
-
-func _input(event):
-	if event.is_action_pressed(\"reset_player\"):
-		player.queue_free()
-		spawn_player()
-		
-func spawn_player():
 	player = player_scene.instantiate()
 	player.position = Vector2.ZERO
 	add_child(player)
+
+func _input(event):
+	if event.is_action_pressed(\"reset_player\"):
+		player.cancel_movement()
+		player.position = Vector2.ZERO
 "
 
 [node name="player_spawner" type="Node2D"]

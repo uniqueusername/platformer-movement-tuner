@@ -1,7 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://chledrc08mf0n"]
+[gd_scene load_steps=9 format=3 uid="uid://chledrc08mf0n"]
 
-[ext_resource type="Script" path="res://utility/path_tracer.gd" id="1_o5pmy"]
 [ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="1_peh5k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxapw"]
+bg_color = Color(0.380392, 0.380392, 0.380392, 1)
+
+[sub_resource type="Theme" id="Theme_ij730"]
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/font_sizes/font_size = 24
 
 [sub_resource type="GDScript" id="GDScript_1q2na"]
 resource_name = "floor"
@@ -54,6 +60,10 @@ func update_platforms():
 	
 	# place player spawner
 	player_spawner.global_position = Vector2(48, viewport_size.y - platform_height/2 - 96)
+
+func _adjust_gap_width(value):
+	gap_width = value
+	update_platforms()
 "
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3ptks"]
@@ -69,8 +79,189 @@ shader = ExtResource("1_peh5k")
 
 [node name="main" type="Node2D"]
 
-[node name="jump_tracer" type="Line2D" parent="."]
-script = ExtResource("1_o5pmy")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lxapw")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="controls" type="VBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="gap_width" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Gap Width"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+max_value = 2000.0
+step = 0.5
+value = 400.0
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+
+[node name="start_accel" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/start_accel"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Start Acceleration"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/start_accel"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 100.0
+max_value = 1200.0
+step = 0.5
+value = 400.0
+
+[node name="stop_accel" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/stop_accel"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Stop Acceleration"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/stop_accel"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 100.0
+max_value = 1200.0
+step = 0.5
+value = 400.0
+
+[node name="max_speed" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/max_speed"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Max Speed"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/max_speed"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 100.0
+max_value = 2000.0
+step = 0.5
+value = 1200.0
+
+[node name="jump_height" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/jump_height"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Jump Height"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/jump_height"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 4.0
+max_value = 1000.0
+step = 0.5
+value = 96.0
+
+[node name="first_half_grav" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/first_half_grav"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Jumping Gravity"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/first_half_grav"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 32.0
+max_value = 2000.0
+step = 0.5
+value = 980.0
+
+[node name="second_half_grav" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/second_half_grav"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Falling Gravity"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/second_half_grav"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+min_value = 32.0
+max_value = 2000.0
+step = 0.5
+value = 980.0
+
+[node name="air_strafe_mult" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/air_strafe_mult"]
+layout_mode = 2
+theme = SubResource("Theme_ij730")
+text = "Air Strafe Multiplier"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/air_strafe_mult"]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+max_value = 1.0
+step = 2.08165e-12
+value = 0.2
 
 [node name="floor" type="Node2D" parent="."]
 position = Vector2(576, 2.08165e-12)
@@ -98,3 +289,5 @@ texture = SubResource("CanvasTexture_1yc25")
 
 [node name="collider" type="CollisionShape2D" parent="floor/right"]
 shape = SubResource("RectangleShape2D_u3jlu")
+
+[connection signal="value_changed" from="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width/HSlider" to="floor" method="_adjust_gap_width"]
