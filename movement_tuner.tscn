@@ -100,7 +100,7 @@ script/source = "extends Area2D
 
 var mouse_over_ui: bool = false
 
-func _process(delta):
+func _process(_delta):
 	global_position = get_viewport().get_mouse_position()
 	if get_overlapping_bodies().size() == 0 and !mouse_over_ui:
 		$platform_placeholder.visible = true

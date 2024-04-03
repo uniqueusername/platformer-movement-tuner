@@ -25,6 +25,6 @@ func _on_mouse_exited():
 	$sprite.visible = true
 	$hover.visible = false
 
-func _on_input_event(viewport, event, shape_idx):
+func _on_input_event(_viewport, event, _shape_idx):
 	if event.is_action_pressed("click") and mouse_inside and !invulnerable:
 		queue_free()
