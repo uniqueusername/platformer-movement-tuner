@@ -19,14 +19,14 @@ var jump_just_pressed: bool = false
 @export var max_speed: float = 1200
 
 @export_subgroup("air movement")
-@export var first_half_grav: float = 980
-@export var second_half_grav: float = 980
 var jump_speed: float = 600 # calculated from height
 @export var jump_height: float = 96:
 	get: return jump_height
 	set(value):
 		jump_height = value
 		jump_speed = calculate_jump(value)
+@export var first_half_grav: float = 980
+@export var second_half_grav: float = 980
 @export var air_strafe_multiplier: float = 0.2
 
 func _ready():
@@ -77,16 +77,16 @@ func cancel_movement():
 func update_config(start_accel: float, 
 				   stop_accel:float, 
 				   max_speed: float,
+				   jump_height: float,
 				   first_half_grav: float,
 				   second_half_grav: float,
-				   jump_height: float,
 				   air_strafe_multiplier: float):
 	self.start_accel = start_accel
 	self.stop_accel = stop_accel
 	self.max_speed = max_speed
+	self.jump_height = jump_height
 	self.first_half_grav = first_half_grav
 	self.second_half_grav = second_half_grav
-	self.jump_height = jump_height
 	self.air_strafe_multiplier = air_strafe_multiplier
 
 # calculate jump velocity based on desired jump height

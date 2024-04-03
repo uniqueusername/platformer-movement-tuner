@@ -123,5 +123,3 @@ script = ExtResource("4_732hx")
 sprite = NodePath("../sprite")
 
 [node name="ground_ray" type="RayCast2D" parent="movement"]
-
-[node name="movement_tuner" type="Node2D" parent="."]

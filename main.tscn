@@ -1,5 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://chledrc08mf0n"]
+[gd_scene load_steps=11 format=3 uid="uid://chledrc08mf0n"]
 
+[ext_resource type="PackedScene" uid="uid://is0l27p3s4o" path="res://scenes/player/player_spawner.tscn" id="1_hw30t"]
+[ext_resource type="Script" path="res://utility/movement_configurator.gd" id="1_ipp65"]
 [ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="1_peh5k"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxapw"]
@@ -12,9 +14,6 @@ Label/font_sizes/font_size = 24
 [sub_resource type="GDScript" id="GDScript_1q2na"]
 resource_name = "floor"
 script/source = "extends Node2D
-
-var player_spawner_scene = preload(\"res://scenes/player/player_spawner.tscn\")
-var player_spawner: Node2D
 
 @export_range(0, 2000, 0.5, \"or_greater\") var gap_width: float = 400:
 	get: return gap_width
@@ -30,10 +29,6 @@ var player_spawner: Node2D
 
 func _ready():
 	get_tree().get_root().size_changed.connect(update_platforms)
-	
-	player_spawner = player_spawner_scene.instantiate()
-	add_child(player_spawner)
-	
 	update_platforms()
 
 # update platforms with new information (including viewport changes)
@@ -57,9 +52,6 @@ func update_platforms():
 	# place collision boxes
 	$left/collider.shape.size = $left/sprite.scale
 	$right/collider.shape.size = $right/sprite.scale
-	
-	# place player spawner
-	player_spawner.global_position = Vector2(48, viewport_size.y - platform_height/2 - 96)
 
 func _adjust_gap_width(value):
 	gap_width = value
@@ -79,9 +71,9 @@ shader = ExtResource("1_peh5k")
 
 [node name="main" type="Node2D"]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="gui" type="CanvasLayer" parent="."]
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+[node name="MarginContainer" type="MarginContainer" parent="gui"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -92,57 +84,58 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="gui/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_lxapw")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/MarginContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="gui/MarginContainer/PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="controls" type="VBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer"]
+[node name="configurator" type="VBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+script = ExtResource("1_ipp65")
 
-[node name="gap_width" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="gap_width" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/gap_width"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Gap Width"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width"]
+[node name="HSlider" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/gap_width"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 max_value = 2000.0
 step = 0.5
 value = 400.0
 
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="HSeparator" type="HSeparator" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 
-[node name="start_accel" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="start_accel" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/start_accel"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/start_accel"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Start Acceleration"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/start_accel"]
+[node name="start_accel" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/start_accel"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 100.0
@@ -150,18 +143,18 @@ max_value = 1200.0
 step = 0.5
 value = 400.0
 
-[node name="stop_accel" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="stop_accel" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/stop_accel"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/stop_accel"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Stop Acceleration"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/stop_accel"]
+[node name="stop_accel" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/stop_accel"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 100.0
@@ -169,18 +162,18 @@ max_value = 1200.0
 step = 0.5
 value = 400.0
 
-[node name="max_speed" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="max_speed" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/max_speed"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/max_speed"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Max Speed"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/max_speed"]
+[node name="max_speed" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/max_speed"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 100.0
@@ -188,18 +181,21 @@ max_value = 2000.0
 step = 0.5
 value = 1200.0
 
-[node name="jump_height" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="HSeparator2" type="HSeparator" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
+layout_mode = 2
+
+[node name="jump_height" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/jump_height"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/jump_height"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Jump Height"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/jump_height"]
+[node name="jump_height" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/jump_height"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 4.0
@@ -207,18 +203,18 @@ max_value = 1000.0
 step = 0.5
 value = 96.0
 
-[node name="first_half_grav" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="first_half_grav" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/first_half_grav"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/first_half_grav"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Jumping Gravity"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/first_half_grav"]
+[node name="first_half_grav" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/first_half_grav"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 32.0
@@ -226,18 +222,18 @@ max_value = 2000.0
 step = 0.5
 value = 980.0
 
-[node name="second_half_grav" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="second_half_grav" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/second_half_grav"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/second_half_grav"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Falling Gravity"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/second_half_grav"]
+[node name="second_half_grav" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/second_half_grav"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 min_value = 32.0
@@ -245,18 +241,18 @@ max_value = 2000.0
 step = 0.5
 value = 980.0
 
-[node name="air_strafe_mult" type="HBoxContainer" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls"]
+[node name="air_strafe_mult" type="HBoxContainer" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/air_strafe_mult"]
+[node name="Label" type="Label" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/air_strafe_mult"]
 layout_mode = 2
 theme = SubResource("Theme_ij730")
 text = "Air Strafe Multiplier"
 
-[node name="HSlider" type="HSlider" parent="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/air_strafe_mult"]
+[node name="air_strafe_multiplier" type="HSlider" parent="gui/MarginContainer/PanelContainer/MarginContainer/configurator/air_strafe_mult"]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 max_value = 1.0
@@ -290,4 +286,13 @@ texture = SubResource("CanvasTexture_1yc25")
 [node name="collider" type="CollisionShape2D" parent="floor/right"]
 shape = SubResource("RectangleShape2D_u3jlu")
 
-[connection signal="value_changed" from="CanvasLayer/MarginContainer/PanelContainer/MarginContainer/controls/gap_width/HSlider" to="floor" method="_adjust_gap_width"]
+[node name="player_spawner" parent="." instance=ExtResource("1_hw30t")]
+
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/gap_width/HSlider" to="floor" method="_adjust_gap_width"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/start_accel/start_accel" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_start_accel_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/stop_accel/stop_accel" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_stop_accel_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/max_speed/max_speed" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_max_speed_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/jump_height/jump_height" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_jump_height_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/first_half_grav/first_half_grav" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_first_half_grav_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/second_half_grav/second_half_grav" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_second_half_grav_value_changed"]
+[connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/air_strafe_mult/air_strafe_multiplier" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_air_strafe_multiplier_value_changed"]
