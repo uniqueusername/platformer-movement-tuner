@@ -1,62 +1,48 @@
-[gd_scene load_steps=16 format=3 uid="uid://djw71ie8wroqe"]
+[gd_scene load_steps=17 format=3 uid="uid://djw71ie8wroqe"]
 
-[ext_resource type="Texture2D" uid="uid://dawxfm4v5g37x" path="res://assets/sprites/player/player_idle.png" id="1_nsfjd"]
-[ext_resource type="Texture2D" uid="uid://485tmp7b8c2a" path="res://assets/sprites/player/player_jump.png" id="2_6wssl"]
-[ext_resource type="Texture2D" uid="uid://beapxp4qm050a" path="res://assets/sprites/player/player_run.png" id="2_oqhbi"]
-[ext_resource type="Script" path="res://scenes/player/movement.gd" id="4_732hx"]
-
-[sub_resource type="GDScript" id="GDScript_3c4u0"]
-resource_name = "player"
-script/source = "extends CharacterBody2D
-
-func _ready():
-	# send a reference of myself to the input singleton
-	InputManager.connect_player(self)
-
-func apply_inputs(input_dir: Vector2, jump_just_pressed: bool):
-	$movement.apply_inputs(input_dir, jump_just_pressed)
-
-func cancel_movement():
-	$movement.cancel_movement()
-"
+[ext_resource type="Script" path="res://objects/player/player.gd" id="1_jttor"]
+[ext_resource type="Texture2D" uid="uid://dawxfm4v5g37x" path="res://assets/sprites/player/player_idle.png" id="2_2ehkw"]
+[ext_resource type="Texture2D" uid="uid://485tmp7b8c2a" path="res://assets/sprites/player/player_jump.png" id="3_cuvvv"]
+[ext_resource type="Texture2D" uid="uid://beapxp4qm050a" path="res://assets/sprites/player/player_run.png" id="4_vffy6"]
+[ext_resource type="Script" path="res://objects/player/movement.gd" id="5_rrgl8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bf01k"]
-atlas = ExtResource("2_6wssl")
+atlas = ExtResource("3_cuvvv")
 region = Rect2(0, 0, 14, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1woej"]
-atlas = ExtResource("2_6wssl")
+atlas = ExtResource("3_cuvvv")
 region = Rect2(14, 0, 14, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jxqel"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(0, 0, 13, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hkt2s"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(13, 0, 13, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nha0r"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(26, 0, 13, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3lbpr"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(39, 0, 13, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uiwd3"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(52, 0, 13, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ftsq6"]
-atlas = ExtResource("2_oqhbi")
+atlas = ExtResource("4_vffy6")
 region = Rect2(65, 0, 13, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ntnjk"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_nsfjd")
+"texture": ExtResource("2_2ehkw")
 }],
 "loop": true,
 "name": &"idle",
@@ -105,10 +91,13 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_40m11"]
 size = Vector2(73, 90)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o8i1t"]
+size = Vector2(72, 5)
+
 [node name="player" type="CharacterBody2D"]
 position = Vector2(172, 178)
 collision_layer = 2
-script = SubResource("GDScript_3c4u0")
+script = ExtResource("1_jttor")
 
 [node name="sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(6, 6)
@@ -120,7 +109,11 @@ position = Vector2(1, 3)
 shape = SubResource("RectangleShape2D_40m11")
 
 [node name="movement" type="Node2D" parent="." node_paths=PackedStringArray("sprite")]
-script = ExtResource("4_732hx")
+script = ExtResource("5_rrgl8")
 sprite = NodePath("../sprite")
 
-[node name="ground_ray" type="RayCast2D" parent="movement"]
+[node name="ground_ray" type="ShapeCast2D" parent="movement"]
+position = Vector2(2.08165e-12, 46)
+shape = SubResource("RectangleShape2D_o8i1t")
+target_position = Vector2(2.08165e-12, 5)
+max_results = 1
