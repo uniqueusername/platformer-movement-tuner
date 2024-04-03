@@ -1,53 +1,57 @@
 extends VBoxContainer
 
 # movement component to send config too
-@export var movement: Node2D
+var movement: Node2D
 
-# slider values
-var start_accel: float
-var stop_accel: float
-var max_speed: float
-var jump_height: float
-var first_half_grav: float
-var second_half_grav: float
-var air_strafe_multiplier: float
+@onready var start_accel = $start_accel
+@onready var stop_accel = $stop_accel
+@onready var max_speed = $max_speed
+@onready var jump_height = $jump_height
+@onready var first_half_grav = $first_half_grav
+@onready var second_half_grav = $second_half_grav
+@onready var air_strafe_multiplier = $air_strafe_multiplier
 
 func send_config():
 	if movement:
 		movement.update_config(
-			start_accel,
-			stop_accel,
-			max_speed,
-			jump_height,
-			first_half_grav,
-			second_half_grav,
-			air_strafe_multiplier
+			start_accel.value,
+			stop_accel.value,
+			max_speed.value,
+			jump_height.value,
+			first_half_grav.value,
+			second_half_grav.value,
+			air_strafe_multiplier.value
 		)
+		
+func set_movement_component(component):
+	movement = component
+	
+	start_accel.value = movement.start_accel
+	stop_accel.value = movement.stop_accel
+	max_speed.value = movement.max_speed
+	jump_height.value = movement.jump_height
+	first_half_grav.value = movement.first_half_grav
+	second_half_grav.value = movement.second_half_grav
+	air_strafe_multiplier.value = movement.air_strafe_multiplier
 
-func _on_start_accel_value_changed(value):
-	start_accel = value
+
+func _on_start_accel_value_changed(value: float):
 	send_config()
 
-func _on_stop_accel_value_changed(value):
-	stop_accel = value
+func _on_stop_accel_value_changed(value: float):
 	send_config()
 
-func _on_max_speed_value_changed(value):
-	max_speed = value
+func _on_max_speed_value_changed(value: float):
 	send_config()
 
-func _on_jump_height_value_changed(value):
-	jump_height = value
+func _on_jump_height_value_changed(value: float):
 	send_config()
 
-func _on_first_half_grav_value_changed(value):
-	first_half_grav = value
+func _on_first_half_grav_value_changed(value: float):
 	send_config()
 
-func _on_second_half_grav_value_changed(value):
-	second_half_grav = value
+func _on_second_half_grav_value_changed(value: float):
 	send_config()
 
-func _on_air_strafe_multiplier_value_changed(value):
-	air_strafe_multiplier = value
+func _on_air_strafe_multiplier_value_changed(value: float):
 	send_config()
