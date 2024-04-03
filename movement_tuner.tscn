@@ -1,11 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://chledrc08mf0n"]
+[gd_scene load_steps=17 format=3 uid="uid://chledrc08mf0n"]
 
 [ext_resource type="Script" path="res://utility/movement_configurator.gd" id="1_t3nin"]
 [ext_resource type="PackedScene" uid="uid://wppivb7axvby" path="res://utility/ui/config_slider.tscn" id="2_86j7g"]
 [ext_resource type="Shader" path="res://assets/shaders/platform.gdshader" id="3_8bf5h"]
+[ext_resource type="Shader" path="res://assets/shaders/platform_target.gdshader" id="4_fjqrq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxapw"]
-bg_color = Color(0.380392, 0.380392, 0.380392, 1)
+bg_color = Color(0.380392, 0.380392, 0.380392, 0.784314)
 
 [sub_resource type="GDScript" id="GDScript_1q2na"]
 resource_name = "floor"
@@ -91,6 +92,60 @@ func _input(event):
 # re-place spawner relative to viewport size
 func reposition():
 	global_position = Vector2(48, get_viewport_rect().size.y - 128)
+"
+
+[sub_resource type="GDScript" id="GDScript_2jk7r"]
+resource_name = "platform_spawner"
+script/source = "extends Area2D
+
+var mouse_over_ui: bool = false
+
+func _process(delta):
+	global_position = get_viewport().get_mouse_position()
+	if get_overlapping_bodies().size() == 0 and !mouse_over_ui:
+		$platform_placeholder.visible = true
+		$platform_placeholder.can_place = true
+
+func _on_body_entered(body):
+	if body.scene_file_path == $platform_placeholder.platform_scene.resource_path:
+		$platform_placeholder.visible = false
+		$platform_placeholder.can_place = false
+
+func _on_panel_container_mouse_entered():
+	mouse_over_ui = true
+	$platform_placeholder.visible = false
+	$platform_placeholder.can_place = false
+
+func _on_panel_container_mouse_exited():
+	mouse_over_ui = false
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8svsw"]
+radius = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7h46s"]
+shader = ExtResource("4_fjqrq")
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_fhjy2"]
+
+[sub_resource type="GDScript" id="GDScript_6ie38"]
+resource_name = "platform_spawner"
+script/source = "extends Node2D
+
+var platform_scene = load(\"res://utility/levels/placeable_platform/platform.tscn\")
+var can_place: bool = true
+
+func _input(event):
+	if event.is_action_pressed(\"grow_block\"):
+		scale.x += 48
+	if event.is_action_pressed(\"shrink_block\") and scale.x >= 72:
+		scale.x -= 48
+	
+	if event.is_action_pressed(\"click\") and can_place:
+		var platform = platform_scene.instantiate()
+		platform.global_position = global_position
+		platform.width = scale.x
+		get_parent().add_child(platform)
 "
 
 [node name="movement_tuner" type="Node2D"]
@@ -229,6 +284,22 @@ position = Vector2(48, 584)
 script = SubResource("GDScript_f2i7w")
 movement_tuner = NodePath("../gui/MarginContainer/PanelContainer/MarginContainer/configurator")
 
+[node name="platform_spawner" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+script = SubResource("GDScript_2jk7r")
+
+[node name="collider" type="CollisionShape2D" parent="platform_spawner"]
+shape = SubResource("CircleShape2D_8svsw")
+
+[node name="platform_placeholder" type="Sprite2D" parent="platform_spawner"]
+material = SubResource("ShaderMaterial_7h46s")
+scale = Vector2(240, 48)
+texture = SubResource("CanvasTexture_fhjy2")
+script = SubResource("GDScript_6ie38")
+
+[connection signal="mouse_entered" from="gui/MarginContainer/PanelContainer" to="platform_spawner" method="_on_panel_container_mouse_entered"]
+[connection signal="mouse_exited" from="gui/MarginContainer/PanelContainer" to="platform_spawner" method="_on_panel_container_mouse_exited"]
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/gap_width" to="floor" method="_on_gap_width_value_changed"]
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/start_accel" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_start_accel_value_changed"]
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/stop_accel" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_stop_accel_value_changed"]
@@ -237,3 +308,4 @@ movement_tuner = NodePath("../gui/MarginContainer/PanelContainer/MarginContainer
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/first_half_grav" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_first_half_grav_value_changed"]
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/second_half_grav" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_second_half_grav_value_changed"]
 [connection signal="value_changed" from="gui/MarginContainer/PanelContainer/MarginContainer/configurator/air_strafe_multiplier" to="gui/MarginContainer/PanelContainer/MarginContainer/configurator" method="_on_air_strafe_multiplier_value_changed"]
+[connection signal="body_entered" from="platform_spawner" to="platform_spawner" method="_on_body_entered"]

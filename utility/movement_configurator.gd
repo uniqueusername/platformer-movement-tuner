@@ -35,23 +35,23 @@ func set_movement_component(component):
 	second_half_grav.value = movement.second_half_grav
 	air_strafe_multiplier.value = movement.air_strafe_multiplier
 
-func _on_start_accel_value_changed(value: float):
+func _on_start_accel_value_changed(_value: float):
 	send_config()
 
-func _on_stop_accel_value_changed(value: float):
+func _on_stop_accel_value_changed(_value: float):
 	send_config()
 
-func _on_max_speed_value_changed(value: float):
+func _on_max_speed_value_changed(_value: float):
 	send_config()
 
-func _on_jump_height_value_changed(value: float):
+func _on_jump_height_value_changed(_value: float):
 	send_config()
 
-func _on_first_half_grav_value_changed(value: float):
+func _on_first_half_grav_value_changed(_value: float):
 	send_config()
 
-func _on_second_half_grav_value_changed(value: float):
+func _on_second_half_grav_value_changed(_value: float):
 	send_config()
 
-func _on_air_strafe_multiplier_value_changed(value: float):
+func _on_air_strafe_multiplier_value_changed(_value: float):
 	send_config()

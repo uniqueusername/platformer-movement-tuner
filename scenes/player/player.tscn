@@ -107,6 +107,7 @@ size = Vector2(73, 90)
 
 [node name="player" type="CharacterBody2D"]
 position = Vector2(172, 178)
+collision_layer = 2
 script = SubResource("GDScript_3c4u0")
 
 [node name="sprite" type="AnimatedSprite2D" parent="."]

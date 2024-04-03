@@ -3,33 +3,27 @@ extends HBoxContainer
 signal value_changed(value: float)
 
 @export var label: String = "Label":
-	get: return label
 	set(value):
 		label = value
 		$label.text = value
 @export var min_value: float = 0:
-	get: return min_value
 	set(value): 
 		min_value = value
 		$slider.min_value = value
 @export var max_value: float = 1000:
-	get: return max_value
 	set(value):
 		max_value = value
 		$slider.max_value = value
 @export var step: float = 0.5:
-	get: return step
 	set(value):
 		step = value
 		$slider.step = value
 @export var value: float = min_value
 @export var exponential: bool = false:
-	get: return exponential
 	set(value):
 		exponential = value
 		$slider.exp_edit = value
 @export_multiline var tooltip: String = "":
-	get: return tooltip
 	set(value):
 		tooltip = value
 		$slider.tooltip_text = value

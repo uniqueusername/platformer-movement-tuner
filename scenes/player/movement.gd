@@ -21,7 +21,6 @@ var jump_just_pressed: bool = false
 @export_subgroup("air movement")
 var jump_speed: float = 600 # calculated from height
 @export var jump_height: float = 96:
-	get: return jump_height
 	set(value):
 		jump_height = value
 		jump_speed = calculate_jump(value)
