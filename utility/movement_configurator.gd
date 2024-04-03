@@ -11,6 +11,7 @@ var movement: Node2D
 @onready var second_half_grav = $second_half_grav
 @onready var air_strafe_multiplier = $air_strafe_multiplier
 
+# send values from ui to movement component
 func send_config():
 	if movement:
 		movement.update_config(
@@ -22,10 +23,10 @@ func send_config():
 			second_half_grav.value,
 			air_strafe_multiplier.value
 		)
-		
+
+# retrieve defaults from movement component
 func set_movement_component(component):
 	movement = component
-	
 	start_accel.value = movement.start_accel
 	stop_accel.value = movement.stop_accel
 	max_speed.value = movement.max_speed
@@ -33,7 +34,6 @@ func set_movement_component(component):
 	first_half_grav.value = movement.first_half_grav
 	second_half_grav.value = movement.second_half_grav
 	air_strafe_multiplier.value = movement.air_strafe_multiplier
-
 
 func _on_start_accel_value_changed(value: float):
 	send_config()

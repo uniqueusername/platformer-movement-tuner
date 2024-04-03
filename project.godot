@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="platformer-movement-tuner"
-run/main_scene="res://main.tscn"
+run/main_scene="res://movement_tuner.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://assets/sprites/icon.svg"
 
@@ -22,6 +22,7 @@ InputManager="*res://utility/input_manager.gd"
 [debug]
 
 gdscript/warnings/shadowed_variable=0
+gdscript/default_gravity=980.0
 
 [display]
 
@@ -53,10 +54,6 @@ player_jump={
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194320,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
-
-[physics]
-
-2d/default_gravity=980.0
 
 [rendering]
 
