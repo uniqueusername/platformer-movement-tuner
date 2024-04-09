@@ -37,7 +37,7 @@ var coyote_timer: float = coyote_duration
 
 func _ready():
 	animated = sprite != null
-	calculate_jump(jump_height)
+	jump_speed = calculate_jump(jump_height)
 
 func _physics_process(delta):
 	update_velocities(input_dir, jump_just_pressed, delta)
